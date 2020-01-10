@@ -11,8 +11,12 @@
 
 #include <frc/smartdashboard/SmartDashboard.h>
 
-void Robot::RobotInit() {
-  m_shooterFollower.Follow(m_shooterPrimary);
+void Robot::RobotInit()
+{
+  // use this line for both motors directly driving the shaft at opposite ends
+  m_shooterFollower.Follow(m_shooterPrimary, true);
+  // use this line if both in a gear box turning the same way
+  //m_shooterFollower.Follow(m_shooterPrimary);
 
   // Color Sensor  
   m_colorMatcher.AddColorMatch(kBlueTarget);
