@@ -23,6 +23,10 @@
 #include <rev/ColorSensorV3.h>
 #include <rev/ColorMatch.h>
 
+#include "DriveSystem.h"
+
+#include "conditioning.h"
+
 class Robot : public frc::TimedRobot {
  public:
   const double kCloseToSameValue = 0.0000001;
@@ -41,13 +45,8 @@ class Robot : public frc::TimedRobot {
 
  private:
   frc::XboxController m_controller{0};
-  rev::CANSparkMax m_rightMotor1{1, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_rightMotor2{2, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_leftMotor1{3, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_leftMotor2{4, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  frc::SpeedControllerGroup m_leftSide{m_leftMotor1, m_leftMotor2};
-  frc::SpeedControllerGroup m_rightSide{m_rightMotor1, m_rightMotor2};
-  frc::DifferentialDrive m_DriveSystem{m_leftSide, m_rightSide};
+
+  DriveSystem m_DriveSystem{};
 
   //Shooter
   rev::CANSparkMax m_shooterPrimary{5, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
@@ -65,4 +64,6 @@ class Robot : public frc::TimedRobot {
   rev::ColorMatch m_colorMatcher;
 
   int m_skips = 0;
+
+  cwtech::UniformConditioning m_uniformJoystick;
 };
