@@ -25,6 +25,9 @@ void Robot::RobotInit()
   m_colorMatcher.AddColorMatch(kYellowTarget);
 
   frc::SmartDashboard::PutNumber("Shooter: Target Velocity", 0);
+
+  m_shooterPID.SetP(0.002);
+  m_shooterPID.SetFF(0.000193);
   
   // This shows all PID values and Velocity
   ShowPIDAndVelocityValues();
@@ -81,6 +84,9 @@ void Robot::ShowPIDAndVelocityValues()
   frc::SmartDashboard::PutNumber("Shooter: Ouput Min", m_shooterPID.GetOutputMin());
   frc::SmartDashboard::PutNumber("Shooter: Ouput Max", m_shooterPID.GetOutputMax());
   frc::SmartDashboard::PutNumber("Shooter: Velocity", m_shooterEncoder.GetVelocity());
+  frc::SmartDashboard::PutNumber("Shooter: Output", m_shooterPrimary.GetAppliedOutput());
+  frc::SmartDashboard::PutNumber("Shooter: Current", m_shooterPrimary.GetOutputCurrent());
+  frc::SmartDashboard::PutNumber("Shooter: Temp", m_shooterPrimary.GetMotorTemperature());
 }
 
 void Robot::UpdatePIDValues()
@@ -125,6 +131,9 @@ void Robot::UpdateVelocity()
   auto myVelocity = frc::SmartDashboard::GetNumber("Shooter: Target Velocity", 0);
   m_shooterPID.SetReference(myVelocity, rev::ControlType::kVelocity);
   frc::SmartDashboard::PutNumber("Shooter: Velocity", m_shooterEncoder.GetVelocity());
+  frc::SmartDashboard::PutNumber("Shooter: Output", m_shooterPrimary.GetAppliedOutput());
+  frc::SmartDashboard::PutNumber("Shooter: Current", m_shooterPrimary.GetOutputCurrent());
+  frc::SmartDashboard::PutNumber("Shooter: Temp", m_shooterPrimary.GetMotorTemperature());
 }
 
 void Robot::UpdateColorSensorValues()
