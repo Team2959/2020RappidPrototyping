@@ -3,17 +3,18 @@
 
 Shooter::Shooter()
 {
+}
+
+void Shooter::Init()
+{
     // use this line for both motors directly driving the shaft at opposite ends
     m_shooterFollower.Follow(m_shooterPrimary, true);
     // use this line if both in a gear box turning the same way
     // m_shooterFollower.Follow(m_shooterPrimary);
 
-    m_shooterPID.SetP(0.002);
+    m_shooterPID.SetP(0.0002);
     m_shooterPID.SetFF(0.000193);
-}
 
-void Shooter::Init()
-{
     ShowPIDAndVelocityValues();
 }
 
