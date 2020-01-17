@@ -12,7 +12,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 
-#include <frc/util/color.h>
+#include <frc/util/Color.h>
 #include <rev/ColorSensorV3.h>
 #include <rev/ColorMatch.h>
 
@@ -35,8 +35,8 @@ class Robot : public frc::TimedRobot {
  private:
   frc::XboxController m_controller{0};
 
-  //DriveSystem m_DriveSystem{};
-  Shooter m_shooter{};
+  DriveSystem m_DriveSystem{};
+  // Shooter m_shooter{};
 
   // // Color Sensor
   // static constexpr auto i2cPort = frc::I2C::Port::kOnboard;

@@ -5,7 +5,9 @@
 DriveSystem::DriveSystem()
 {
     m_leftMotorFollower.Follow(m_leftMotorPrimary);
+    m_leftMotorFollower2.Follow(m_leftMotorPrimary);
     m_rightMotorFollower.Follow(m_rightMotorPrimary);
+    m_rightMotorFollower2.Follow(m_rightMotorPrimary);
     m_leftPID.SetFF(kFF);
     m_rightPID.SetFF(kFF);
 }

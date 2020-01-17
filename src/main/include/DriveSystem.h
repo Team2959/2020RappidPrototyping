@@ -8,10 +8,12 @@ class DriveSystem
 private:
   const double kCloseToSameValue = 0.0000001;
   
-  rev::CANSparkMax m_rightMotorPrimary{1, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_rightMotorFollower{2, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_leftMotorPrimary{3, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
-  rev::CANSparkMax m_leftMotorFollower{4, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_leftMotorPrimary{1, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_leftMotorFollower{2, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_leftMotorFollower2{3, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_rightMotorPrimary{4, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_rightMotorFollower{5, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
+  rev::CANSparkMax m_rightMotorFollower2{6, rev::CANSparkMaxLowLevel::MotorType::kBrushless};
   rev::CANPIDController m_rightPID{m_rightMotorPrimary};
   rev::CANPIDController m_leftPID{m_leftMotorPrimary};
   rev::CANEncoder m_rightEncoder{m_rightMotorPrimary};
