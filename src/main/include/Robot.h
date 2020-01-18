@@ -22,6 +22,7 @@
 #include "DriveSystem.h"
 #include "conditioning.h"
 #include "shooter.h"
+#include "Joystick.h"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -37,7 +38,7 @@ public:
 
  private:
   
-  frc::XboxController m_controller{0};
+  Joystick m_controller{};
 
   DriveSystem m_DriveSystem{};
   // Shooter m_shooter{};

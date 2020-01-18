@@ -142,7 +142,6 @@ void Robot::WritePoseToCSV()
     double left = std::get<1>(tuple);
     double right = std::get<2>(tuple);
     // usage of std::tie found here: https://en.cppreference.com/w/cpp/utility/tuple/tie
-    std::cout << "time: " << time << std::endl;
     write(std::to_string(time) + "," + std::to_string(left) + "," + std::to_string(right));
   }
   stream.close();
