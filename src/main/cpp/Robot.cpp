@@ -11,8 +11,18 @@
 
  #include <frc/smartdashboard/SmartDashboard.h>
 
+ #include <fstream>
+ #include <sstream>
+ #include <experimental/filesystem>
+ #include <fcntl.h>
+ #include <ctime>
+
+ #include <hal/cpp/fpga_clock.h>
+
  void Robot::RobotInit()
  {
+
+   m_poseThread = std::thread(&Robot::PoseEstimator, this);
 //   // Color Sensor  
 //   m_colorMatcher.AddColorMatch(kBlueTarget);
 //   m_colorMatcher.AddColorMatch(kGreenTarget);
@@ -21,6 +31,9 @@
 
   // m_shooter.Init();
   m_DriveSystem.ShowPIDGains();
+  m_uniformJoystick.SetDeadband(0.05);
+  m_uniformJoystick.SetExponent(5);
+  m_uniformJoystick.SetRange(0,1);
 }
 
 /**
@@ -94,6 +107,47 @@ void Robot::UpdateColorSensorValues()
 //     frc::SmartDashboard::PutNumber("Confidence", confidence);
 //     frc::SmartDashboard::PutString("Detected Color", colorString);
 //     frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
+}
+
+void Robot::PoseEstimator () {
+  while (true) {
+    // Calculater the robot pose
+    int64_t time = std::chrono::duration_cast<std::chrono::milliseconds>(hal::fpga_clock::now().time_since_epoch()).count();
+    m_pose.push_back(std::make_tuple(time, m_DriveSystem.GetLeftVelocity(), m_DriveSystem.GetRightVelocity()));
+    if(m_pose.size() >= 100) WritePoseToCSV();
+    std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
+  }
+}
+
+void Robot::WritePoseToCSV()
+{
+  bool header = false;
+  if(!std::ifstream{"/home/lvuser/pose.csv"}.good())
+  {
+    header = true;
+  }
+  std::fstream stream;
+  // /home/lvuser was recomended here: https://www.chiefdelphi.com/t/text-files-on-the-roborio/141334/3
+  stream.open("/home/lvuser/pose.csv", std::fstream::app | std::fstream::out | std::fstream::in);
+  if(!stream.is_open())
+  {
+    frc::SmartDashboard::PutString("DEBUG", "Stream failed to open");
+    return; 
+  }
+  #define write(x) stream << x << "\n"
+  if(header) write(kCSVHeader);
+  for(auto& tuple : m_pose)
+  {
+    int64_t time = std::get<0>(tuple);
+    double left = std::get<1>(tuple);
+    double right = std::get<2>(tuple);
+    // usage of std::tie found here: https://en.cppreference.com/w/cpp/utility/tuple/tie
+    std::cout << "time: " << time << std::endl;
+    write(std::to_string(time) + "," + std::to_string(left) + "," + std::to_string(right));
+  }
+  stream.close();
+  #undef write
+  m_pose.clear();
 }
 
 #ifndef RUNNING_FRC_TESTS

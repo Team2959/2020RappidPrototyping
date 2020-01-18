@@ -79,3 +79,11 @@ void DriveSystem::ShowVelocity()
     frc::SmartDashboard::PutNumber(kName + ": Left Output", m_leftMotorPrimary.GetAppliedOutput());
     frc::SmartDashboard::PutNumber(kName + ": Left Current", m_leftMotorPrimary.GetOutputCurrent());
 }
+
+double DriveSystem::GetLeftVelocity() {
+    return m_leftEncoder.GetVelocity();
+}
+
+double DriveSystem::GetRightVelocity() {
+    return m_rightEncoder.GetVelocity();
+}

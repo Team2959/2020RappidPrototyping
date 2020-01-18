@@ -8,6 +8,9 @@
 #pragma once
 
 #include <string>
+#include <thread>
+#include <tuple>
+#include <chrono>
 
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
@@ -21,7 +24,7 @@
 #include "shooter.h"
 
 class Robot : public frc::TimedRobot {
- public:
+public:
   void RobotInit() override;
   void RobotPeriodic() override;
   void AutonomousInit() override;
@@ -33,6 +36,7 @@ class Robot : public frc::TimedRobot {
   void UpdateColorSensorValues();
 
  private:
+  
   frc::XboxController m_controller{0};
 
   DriveSystem m_DriveSystem{};
@@ -50,4 +54,10 @@ class Robot : public frc::TimedRobot {
   int m_skips = 0;
 
   cwtech::UniformConditioning m_uniformJoystick;
+
+  std::thread m_poseThread;
+  std::vector<std::tuple<int64_t, double, double>> m_pose;
+  void PoseEstimator();
+  void WritePoseToCSV();
+  const std::string kCSVHeader = "Time,LeftVelocity,RightVelocity";
 };

@@ -31,4 +31,6 @@ public:
   void ShowPIDGains();
   void UpdatePIDGains();
   void ShowVelocity(); // And Output and Current
+  double GetLeftVelocity();
+  double GetRightVelocity();
 };
