@@ -22,7 +22,7 @@
 #include "DriveSystem.h"
 #include "conditioning.h"
 #include "shooter.h"
-#include "Joystick.h"
+#include "JoystickAutoSelect.h"
 
 class Robot : public frc::TimedRobot {
 public:
@@ -34,14 +34,12 @@ public:
   void TeleopPeriodic() override;
   void TestPeriodic() override;
 
-  void UpdateColorSensorValues();
-
  private:
   
-  Joystick m_controller{};
+  JoystickAutoSelect m_controller;
 
-  DriveSystem m_DriveSystem{};
-  // Shooter m_shooter{};
+  DriveSystem m_DriveSystem;
+  // Shooter m_shooter;
 
   // // Color Sensor
   // static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
@@ -51,6 +49,8 @@ public:
   // static constexpr frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
   // rev::ColorSensorV3 m_colorSensor{i2cPort};
   // rev::ColorMatch m_colorMatcher;
+
+  void UpdateColorSensorValues();
 
   int m_skips = 0;
 

@@ -1,24 +1,21 @@
-#include "Joystick.h"
+#include "JoystickAutoSelect.h"
 
 #include <frc/DriverStation.h>
 #include <iostream>
 
-Joystick::Joystick()
+JoystickAutoSelect::JoystickAutoSelect()
 {
     if(frc::DriverStation::GetInstance().GetJoystickIsXbox(0))
     {
         m_joystickChoice = JoystickChoice::Xbox;
-        m_xbox = frc::XboxController{0};
     }
     else
     {
         m_joystickChoice = JoystickChoice::Joysticks;
-        m_left = frc::Joystick{0};
-        m_right = frc::Joystick{1};
     }
 }
 
-double Joystick::GetY(frc::GenericHID::JoystickHand hand)
+double JoystickAutoSelect::GetY(frc::GenericHID::JoystickHand hand)
 {
     if(m_joystickChoice == JoystickChoice::Joysticks)
     {
@@ -30,12 +27,12 @@ double Joystick::GetY(frc::GenericHID::JoystickHand hand)
     }
     else
     {
-        std::cout << "Joystick::GetY Warning: Joystick Choice in Unknown" << std::endl;
+        std::cout << "JoystickAutoSelect::GetY Warning: JoystickAutoSelect Choice in Unknown" << std::endl;
     }
     return 0;
 }
 
-double Joystick::GetX(frc::GenericHID::JoystickHand hand)
+double JoystickAutoSelect::GetX(frc::GenericHID::JoystickHand hand)
 {
     if(m_joystickChoice == JoystickChoice::Joysticks)
     {
@@ -47,7 +44,7 @@ double Joystick::GetX(frc::GenericHID::JoystickHand hand)
     }
     else
     {
-        std::cout << "Joystick::GetX Warning: Joystick Choice in Unknown" << std::endl;
+        std::cout << "JoystickAutoSelect::GetX Warning: JoystickAutoSelect Choice in Unknown" << std::endl;
     }
     return 0;
 }

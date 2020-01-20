@@ -5,23 +5,22 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
- #include "Robot.h"
+#include "Robot.h"
 
- #include <iostream>
+#include <iostream>
 
- #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
- #include <fstream>
- #include <sstream>
- #include <experimental/filesystem>
- #include <fcntl.h>
- #include <ctime>
+#include <fstream>
+#include <sstream>
+#include <experimental/filesystem>
+#include <fcntl.h>
+#include <ctime>
 
- #include <hal/cpp/fpga_clock.h>
+#include <hal/cpp/fpga_clock.h>
 
- void Robot::RobotInit()
- {
-
+void Robot::RobotInit()
+{
    m_poseThread = std::thread(&Robot::PoseEstimator, this);
 //   // Color Sensor  
 //   m_colorMatcher.AddColorMatch(kBlueTarget);
@@ -33,7 +32,6 @@
   m_DriveSystem.ShowPIDGains();
   m_uniformJoystick.SetDeadband(0.05);
   m_uniformJoystick.SetExponent(5);
-  m_uniformJoystick.SetRange(0,1);
 }
 
 /**
