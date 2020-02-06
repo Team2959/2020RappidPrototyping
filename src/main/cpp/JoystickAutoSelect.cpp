@@ -5,14 +5,14 @@
 
 JoystickAutoSelect::JoystickAutoSelect()
 {
-    if(frc::DriverStation::GetInstance().GetJoystickIsXbox(0))
-    {
-        m_joystickChoice = JoystickChoice::Xbox;
-    }
-    else
-    {
+    // if(frc::DriverStation::GetInstance().GetJoystickIsXbox(0))
+    // {
+        // m_joystickChoice = JoystickChoice::Xbox;
+    // }
+    // else
+    // {
         m_joystickChoice = JoystickChoice::Joysticks;
-    }
+    // }
 }
 
 double JoystickAutoSelect::GetY(frc::GenericHID::JoystickHand hand)
@@ -21,10 +21,10 @@ double JoystickAutoSelect::GetY(frc::GenericHID::JoystickHand hand)
     {
         return (hand == frc::GenericHID::kRightHand) ? m_right.GetY() : m_left.GetY(); 
     }
-    else if(m_joystickChoice == JoystickChoice::Xbox)
-    {
-        return m_xbox.GetY(hand);
-    }
+    // else if(m_joystickChoice == JoystickChoice::Xbox)
+    // {
+        // return m_xbox.GetY(hand);
+    // }
     else
     {
         std::cout << "JoystickAutoSelect::GetY Warning: JoystickAutoSelect Choice in Unknown" << std::endl;

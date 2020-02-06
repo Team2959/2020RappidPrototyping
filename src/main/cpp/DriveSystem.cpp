@@ -14,8 +14,12 @@ DriveSystem::DriveSystem()
 
 void DriveSystem::TankDrive(double leftSpeed, double rightSpeed)
 {
-    m_leftPID.SetReference(leftSpeed, rev::ControlType::kVelocity);
-    m_rightPID.SetReference(-rightSpeed, rev::ControlType::kVelocity);
+   // m_leftPID.SetReference(leftSpeed, rev::ControlType::kVelocity);
+   //m_rightPID.SetReference(-rightSpeed, rev::ControlType::kVelocity);
+   m_leftMotorPrimary.Set(leftSpeed);
+   m_rightMotorPrimary.Set(-rightSpeed);
+    m_leftSetpoint = leftSpeed;
+    m_rightSetpoint = rightSpeed;
 }
 
 void DriveSystem::ShowPIDGains()
@@ -69,6 +73,8 @@ void DriveSystem::UpdatePIDGains()
 
 void DriveSystem::ShowVelocity()
 {
+    frc::SmartDashboard::PutNumber(kName + ": Left Setpoint", m_leftSetpoint);
+    frc::SmartDashboard::PutNumber(kName + ": Right Setpoint", m_rightSetpoint);
     frc::SmartDashboard::PutNumber(kName + ": Right Velocity", m_rightEncoder.GetVelocity());
     frc::SmartDashboard::PutNumber(kName + ": Right Position", m_rightEncoder.GetPosition());
     frc::SmartDashboard::PutNumber(kName + ": Right Output", m_rightMotorPrimary.GetAppliedOutput());

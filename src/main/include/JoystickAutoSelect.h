@@ -9,7 +9,7 @@ public:
     JoystickAutoSelect();
     double GetX(frc::GenericHID::JoystickHand hand);
     double GetY(frc::GenericHID::JoystickHand hand);
-    
+    double GetRightThrottle() { return m_left.GetThrottle(); }
 private:
     enum class JoystickChoice
     {

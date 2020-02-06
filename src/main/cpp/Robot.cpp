@@ -21,14 +21,14 @@
 
 void Robot::RobotInit()
 {
-   m_poseThread = std::thread(&Robot::PoseEstimator, this);
+  //  m_poseThread = std::thread(&Robot::PoseEstimator, this);
 //   // Color Sensor  
 //   m_colorMatcher.AddColorMatch(kBlueTarget);
 //   m_colorMatcher.AddColorMatch(kGreenTarget);
 //   m_colorMatcher.AddColorMatch(kRedTarget);
 //   m_colorMatcher.AddColorMatch(kYellowTarget);
 
-  // m_shooter.Init();
+  m_shooter.Init();
   m_DriveSystem.ShowPIDGains();
   m_uniformJoystick.SetDeadband(0.05);
   m_uniformJoystick.SetExponent(5);
@@ -53,7 +53,7 @@ void Robot::RobotPeriodic()
 
   if(m_skips % 51 == 0)
   {
-    // m_shooter.UpdatePIDValues();
+    m_shooter.UpdatePIDValues();
   }
 
   if(m_skips % 49 == 0)
@@ -67,15 +67,19 @@ void Robot::AutonomousInit() {}
 
 void Robot::AutonomousPeriodic() {}
 
-void Robot::TeleopInit() {}
+void Robot::TeleopInit() 
+{
+}
 
 void Robot::TeleopPeriodic() 
 {
-  m_DriveSystem.TankDrive(m_uniformJoystick.Condition(-m_controller.GetY(frc::GenericHID::JoystickHand::kLeftHand)) * DriveSystem::kMaxVelocity,
-                         m_uniformJoystick.Condition(-m_controller.GetY(frc::GenericHID::JoystickHand::kRightHand)) * DriveSystem::kMaxVelocity);
+  m_DriveSystem.TankDrive(m_uniformJoystick.Condition(-m_controller.GetY(frc::GenericHID::JoystickHand::kLeftHand))/* * DriveSystem::kMaxVelocity*/,
+                         m_uniformJoystick.Condition(-m_controller.GetY(frc::GenericHID::JoystickHand::kRightHand))/* * DriveSystem::kMaxVelocity*/);
   
-  // m_shooter.UpdateVelocity();
-  m_DriveSystem.ShowVelocity();
+  m_quick.Set(m_controller.GetRightThrottle());
+
+  m_shooter.UpdateVelocity();
+  // m_DriveSystem.ShowVelocity();
 }
 
 void Robot::TestPeriodic() {}
@@ -108,13 +112,13 @@ void Robot::UpdateColorSensorValues()
 }
 
 void Robot::PoseEstimator () {
-  while (true) {
-    // Calculater the robot pose
-    int64_t time = std::chrono::duration_cast<std::chrono::milliseconds>(hal::fpga_clock::now().time_since_epoch()).count();
-    m_pose.push_back(std::make_tuple(time, m_DriveSystem.GetLeftVelocity(), m_DriveSystem.GetRightVelocity()));
-    if(m_pose.size() >= 100) WritePoseToCSV();
-    std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
-  }
+  // while (true) {
+  //   // Calculater the robot pose
+  //   int64_t time = std::chrono::duration_cast<std::chrono::milliseconds>(hal::fpga_clock::now().time_since_epoch()).count();
+  //   m_pose.push_back(std::make_tuple(time, m_DriveSystem.GetLeftVelocity(), m_DriveSystem.GetRightVelocity()));
+  //   if(m_pose.size() >= 100) WritePoseToCSV();
+  //   std::this_thread::sleep_for(std::chrono::duration<int, std::milli>(10));
+  // }
 }
 
 void Robot::WritePoseToCSV()

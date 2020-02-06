@@ -18,6 +18,7 @@
 #include <frc/util/Color.h>
 #include <rev/ColorSensorV3.h>
 #include <rev/ColorMatch.h>
+#include <frc/Spark.h>
 
 #include "DriveSystem.h"
 #include "conditioning.h"
@@ -37,9 +38,10 @@ public:
  private:
   
   JoystickAutoSelect m_controller;
-
   DriveSystem m_DriveSystem;
-  // Shooter m_shooter;
+  Shooter m_shooter;
+
+  frc::Spark m_quick{0};
 
   // // Color Sensor
   // static constexpr auto i2cPort = frc::I2C::Port::kOnboard;

@@ -21,6 +21,8 @@ private:
 
   const std::string kName = "DriveSystem";
   const double kFF = 0.0005;
+  double m_rightSetpoint = 0.0;
+  double m_leftSetpoint = 0.0;
 public:
   constexpr static double kMaxVelocity = 5500;
   // Init happens here
