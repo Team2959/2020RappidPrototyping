@@ -62,6 +62,8 @@ public:
 
   cwtech::UniformConditioning m_uniformJoystick;
 
+  std::vector<std::tuple< std::string/* Guessed Color */, double /* Red */, double /* Green */, double /* Blue */ > > m_colorTracking;
+
   std::thread m_poseThread;
   std::vector<std::tuple<int64_t, double, double>> m_pose;
   void PoseEstimator();
