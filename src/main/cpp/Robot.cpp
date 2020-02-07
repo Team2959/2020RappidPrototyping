@@ -27,7 +27,7 @@ void Robot::RobotInit()
   m_colorMatcher.AddColorMatch(kGreenTarget);
   m_colorMatcher.AddColorMatch(kRedTarget);
   m_colorMatcher.AddColorMatch(kYellowTarget);
-  // m_colorSensor.ConfigureColorSensor(rev::ColorSensorV3::ColorResolution::k20bit, rev::ColorSensorV3::ColorMeasurementRate::k25ms);
+  m_colorSensor.ConfigureColorSensor(rev::ColorSensorV3::ColorResolution::k16bit, rev::ColorSensorV3::ColorMeasurementRate::k25ms);
   frc::SmartDashboard::PutBoolean("Count Color", false);
   frc::SmartDashboard::PutNumber("Color Counted", 0);
 
