@@ -51,7 +51,10 @@ public:
   static constexpr frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
   rev::ColorSensorV3 m_colorSensor{i2cPort};
   rev::ColorMatch m_colorMatcher;
-  static constexpr frc::Color kCountedColor = kRedTarget;
+  static constexpr frc::Color kCountedColor = kGreenTarget;
+  frc::Color m_lastColor = frc::Color(0,0,0);
+  bool m_countColors = false;
+  int m_colorCount = 0;
 
   void UpdateColorSensorValues();
 

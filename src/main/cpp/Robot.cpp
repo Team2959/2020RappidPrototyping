@@ -22,18 +22,19 @@
 void Robot::RobotInit()
 {
   //  m_poseThread = std::thread(&Robot::PoseEstimator, this);
-//   // Color Sensor  
-//   m_colorMatcher.AddColorMatch(kBlueTarget);
-//   m_colorMatcher.AddColorMatch(kGreenTarget);
-//   m_colorMatcher.AddColorMatch(kRedTarget);
-//   m_colorMatcher.AddColorMatch(kYellowTarget);
+  // Color Sensor  
+  m_colorMatcher.AddColorMatch(kBlueTarget);
+  m_colorMatcher.AddColorMatch(kGreenTarget);
+  m_colorMatcher.AddColorMatch(kRedTarget);
+  m_colorMatcher.AddColorMatch(kYellowTarget);
+  // m_colorSensor.ConfigureColorSensor(rev::ColorSensorV3::ColorResolution::k20bit, rev::ColorSensorV3::ColorMeasurementRate::k25ms);
+  frc::SmartDashboard::PutBoolean("Count Color", false);
+  frc::SmartDashboard::PutNumber("Color Counted", 0);
 
   // m_shooter.Init();
   // m_DriveSystem.ShowPIDGains();
   // m_uniformJoystick.SetDeadband(0.05);
   // m_uniformJoystick.SetExponent(5);
-  frc::SmartDashboard::PutBoolean("Count Color", false);
-  frc::SmartDashboard::PutNumber("Color Counted", 0);
 }
 
 /**
@@ -48,7 +49,7 @@ void Robot::RobotPeriodic()
 {
   m_skips++;
 
-  if(m_skips % 5 == 0)
+  // if(m_skips % 5 == 0)
   {
     UpdateColorSensorValues();
   }
@@ -93,36 +94,45 @@ void Robot::UpdateColorSensorValues()
     double confidence = 0.0;
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
 
-    bool counting = frc::SmartDashboard::GetBoolean("Count Color", false);
-    if(matchedColor == kCountedColor && counting)
+    if (m_countColors && !(m_lastColor == matchedColor))
     {
-      frc::SmartDashboard::PutNumber("Color Counted", frc::SmartDashboard::GetNumber("Color Counted", 0) + 1);
+      m_lastColor = matchedColor;
+      if(m_lastColor == kCountedColor)
+      {
+        m_colorCount++;
+      }
     }
 
 // when counting is disabled reset counter
-    if(!counting)
+    if(!m_countColors)
     {
-      frc::SmartDashboard::PutNumber("Color Counted", 0);
+      m_colorCount = 0;
+      m_lastColor = frc::Color(0,0,0);
     }
 
-    // if (matchedColor == kBlueTarget) {
-      // colorString = "Blue";
-    // } else if (matchedColor == kRedTarget) {
-      // colorString = "Red";
-    // } else if (matchedColor == kGreenTarget) {
-      // colorString = "Green";
-    // } else if (matchedColor == kYellowTarget) {
-      // colorString = "Yellow";
-    // } else {
-      // colorString = "Unknown";
-    // }
+  if(m_skips % 50 == 0)
+  {
+    frc::SmartDashboard::PutNumber("Color Counted", m_colorCount);
+    m_countColors = frc::SmartDashboard::GetBoolean("Count Color", false);
+    if (matchedColor == kBlueTarget) {
+      colorString = "Blue";
+    } else if (matchedColor == kRedTarget) {
+      colorString = "Red";
+    } else if (matchedColor == kGreenTarget) {
+      colorString = "Green";
+    } else if (matchedColor == kYellowTarget) {
+      colorString = "Yellow";
+    } else {
+      colorString = "Unknown";
+    }
 
-//     frc::SmartDashboard::PutNumber("Red", detectedColor.red);
-//     frc::SmartDashboard::PutNumber("Green", detectedColor.green);
-//     frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
-//     frc::SmartDashboard::PutNumber("Confidence", confidence);
-//     frc::SmartDashboard::PutString("Detected Color", colorString);
-//     frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
+    frc::SmartDashboard::PutNumber("Red", detectedColor.red);
+    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
+    frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
+    frc::SmartDashboard::PutNumber("Confidence", confidence);
+    frc::SmartDashboard::PutString("Detected Color", colorString);
+    frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
+  }
 }
 
 void Robot::PoseEstimator () {
