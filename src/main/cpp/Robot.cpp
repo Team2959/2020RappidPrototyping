@@ -41,6 +41,11 @@ void Robot::RobotInit()
   // m_DriveSystem.ShowPIDGains();
   // m_uniformJoystick.SetDeadband(0.05);
   // m_uniformJoystick.SetExponent(5);
+
+  if (exists("/home/lvuser/colors.csv"))
+  {
+    remove("/home/lvuser/colors.csv");
+  }
 }
 
 /**
@@ -130,6 +135,31 @@ void Robot::UpdateColorSensorValues()
   {
     m_colorCount = 0;
     m_lastColor = frc::Color(0,0,0);
+
+    if(m_colorTracking.size() > 0)
+    {
+      bool headerNotThere = !exists("/home/lvuser/colors.csv");
+      std::fstream stream;
+      stream.open("/home/lvuser/colors.csv", std::fstream::app | std::fstream::out | std::fstream::in);
+      if(stream.is_open())
+      {
+        std::cout << "" << std::endl;
+      }
+      if(headerNotThere)
+      {
+        stream << "Guess,Red,Green,Blue\n";
+      }
+      for(auto& item : m_colorTracking)
+      {
+        std::string guess = std::get<0>(item);
+        double red = std::get<1>(item);
+        double green = std::get<2>(item);
+        double blue = std::get<3>(item);
+        stream << guess << std::to_string(red) << std::to_string(green) << std::to_string(blue) << "\n";
+      }
+      stream.close();
+      m_colorTracking.clear();
+    }
   }
 
   if(m_skips % 50 == 0)
@@ -155,32 +185,6 @@ void Robot::UpdateColorSensorValues()
     frc::SmartDashboard::PutString("Detected Color", colorString);
     frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
   }
-
-  if(m_skips % 100 == 0)
-  {
-    bool headerNotThere = exists("/home/lvuser/colors.csv");
-    std::fstream stream;
-    stream.open("/home/lvuser/colors.csv");
-    if(stream.is_open())
-    {
-      std::cout << "" << std::endl;
-    }
-    if(headerNotThere)
-    {
-      stream << "Guess,Red,Green,Blue\n";
-    }
-    for(auto& item : m_colorTracking)
-    {
-      std::string guess = std::get<0>(item);
-      double red = std::get<1>(item);
-      double green = std::get<2>(item);
-      double blue = std::get<3>(item);
-      stream << guess << std::to_string(red) << std::to_string(green) << std::to_string(blue) << "\n";
-    }
-    stream.close();
-    m_colorTracking.clear();
-  }
-  
 }
 
 void Robot::PoseEstimator () {
