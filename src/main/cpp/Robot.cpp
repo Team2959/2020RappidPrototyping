@@ -105,7 +105,7 @@ void Robot::UpdateColorSensorValues()
   double confidence = 0.0;
   frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
 
-  if (m_countColors && !(m_lastColor == matchedColor))
+  if (m_countColors)// && !(m_lastColor == matchedColor))
   {
     // tracking colors
 
@@ -143,8 +143,11 @@ void Robot::UpdateColorSensorValues()
       stream.open("/home/lvuser/colors.csv", std::fstream::app | std::fstream::out | std::fstream::in);
       if(stream.is_open())
       {
-        std::cout << "" << std::endl;
+        std::cout << "stream failed to open" << std::endl;
       }
+      stream << "\n";
+      stream << "\n";
+      stream << "\n";
       if(headerNotThere)
       {
         stream << "Guess,Red,Green,Blue\n";
@@ -155,7 +158,10 @@ void Robot::UpdateColorSensorValues()
         double red = std::get<1>(item);
         double green = std::get<2>(item);
         double blue = std::get<3>(item);
-        stream << guess << std::to_string(red) << std::to_string(green) << std::to_string(blue) << "\n";
+        stream << guess << ',' <<
+          std::to_string(red) << ',' <<
+          std::to_string(green) << ',' <<
+          std::to_string(blue) << "\n";
       }
       stream.close();
       m_colorTracking.clear();
