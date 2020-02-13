@@ -15,14 +15,12 @@
 #include <frc/TimedRobot.h>
 #include <frc/XboxController.h>
 
-#include <frc/util/Color.h>
-#include <rev/ColorSensorV3.h>
-#include <rev/ColorMatch.h>
 #include <frc/Spark.h>
 
 #include "DriveSystem.h"
 #include "conditioning.h"
 #include "shooter.h"
+#include "ColorWheel.h"
 #include "JoystickAutoSelect.h"
 
 class Robot : public frc::TimedRobot {
@@ -43,26 +41,12 @@ public:
 
   // frc::Spark m_quick{0};
 
-  // // Color Sensor
-  static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
-  static constexpr frc::Color kBlueTarget = frc::Color(0.143, 0.427, 0.429);
-  static constexpr frc::Color kGreenTarget = frc::Color(0.197, 0.561, 0.240);
-  static constexpr frc::Color kRedTarget = frc::Color(0.561, 0.232, 0.114);
-  static constexpr frc::Color kYellowTarget = frc::Color(0.361, 0.524, 0.113);
-  rev::ColorSensorV3 m_colorSensor{i2cPort};
-  rev::ColorMatch m_colorMatcher;
-  static constexpr frc::Color kCountedColor = kGreenTarget;
-  frc::Color m_lastColor = frc::Color(0,0,0);
-  bool m_countColors = false;
-  int m_colorCount = 0;
-
-  void UpdateColorSensorValues();
+  // Color Sensor
+  ColorWheel m_colorWheel;
 
   int m_skips = 0;
 
   cwtech::UniformConditioning m_uniformJoystick;
-
-  std::vector<std::tuple< std::string/* Guessed Color */, double /* Red */, double /* Green */, double /* Blue */ > > m_colorTracking;
 
   std::thread m_poseThread;
   std::vector<std::tuple<int64_t, double, double>> m_pose;

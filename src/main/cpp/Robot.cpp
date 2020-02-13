@@ -20,32 +20,14 @@
 
 #include <sys/stat.h>
 
-inline bool exists (const std::string& filename) {
-  struct stat buffer;   
-  return (stat (filename.c_str(), &buffer) == 0); 
-}
-
 void Robot::RobotInit()
 {
   //  m_poseThread = std::thread(&Robot::PoseEstimator, this);
-  // Color Sensor  
-  m_colorSensor.ConfigureColorSensor(rev::ColorSensorV3::ColorResolution::k16bit, rev::ColorSensorV3::ColorMeasurementRate::k25ms);
-  m_colorMatcher.AddColorMatch(kBlueTarget);
-  m_colorMatcher.AddColorMatch(kGreenTarget);
-  m_colorMatcher.AddColorMatch(kRedTarget);
-  m_colorMatcher.AddColorMatch(kYellowTarget);
-  frc::SmartDashboard::PutBoolean("Count Color", false);
-  frc::SmartDashboard::PutNumber("Color Counted", 0);
-
   // m_shooter.Init();
   // m_DriveSystem.ShowPIDGains();
   // m_uniformJoystick.SetDeadband(0.05);
   // m_uniformJoystick.SetExponent(5);
-
-  if (exists("/home/lvuser/colors.csv"))
-  {
-    remove("/home/lvuser/colors.csv");
-  }
+  m_colorWheel.OnRobotInit();
 }
 
 /**
@@ -62,7 +44,7 @@ void Robot::RobotPeriodic()
 
   // if(m_skips % 5 == 0)
   {
-    UpdateColorSensorValues();
+    m_colorWheel.UpdateColorSensorValues(m_skips);
   }
 
   if(m_skips % 51 == 0)
@@ -97,101 +79,6 @@ void Robot::TeleopPeriodic()
 }
 
 void Robot::TestPeriodic() {}
-
-void Robot::UpdateColorSensorValues()
-{
-  frc::Color detectedColor = m_colorSensor.GetColor();
-  std::string colorString;
-  double confidence = 0.0;
-  frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
-
-  if (m_countColors)// && !(m_lastColor == matchedColor))
-  {
-    // tracking colors
-
-    std::string guessedColor = "";
-    if(matchedColor == kBlueTarget) guessedColor = "Blue";
-    else if(matchedColor == kGreenTarget) guessedColor = "Green";
-    else if(matchedColor == kRedTarget) guessedColor = "Red";
-    else if(matchedColor == kYellowTarget) guessedColor = "Yellow";
-    else guessedColor = "Unknown";
-
-    m_colorTracking.push_back(std::tuple<std::string,double,double,double>(
-      guessedColor,
-      detectedColor.red,
-      detectedColor.green,
-      detectedColor.blue
-    ));
-
-    m_lastColor = matchedColor;
-    if(m_lastColor == kCountedColor)
-    {
-      m_colorCount++;
-    }
-  }
-
-// when counting is disabled reset counter
-  if(!m_countColors)
-  {
-    m_colorCount = 0;
-    m_lastColor = frc::Color(0,0,0);
-
-    if(m_colorTracking.size() > 0)
-    {
-      bool headerNotThere = !exists("/home/lvuser/colors.csv");
-      std::fstream stream;
-      stream.open("/home/lvuser/colors.csv", std::fstream::app | std::fstream::out | std::fstream::in);
-      if(stream.is_open())
-      {
-        std::cout << "stream failed to open" << std::endl;
-      }
-      stream << "\n";
-      stream << "\n";
-      stream << "\n";
-      if(headerNotThere)
-      {
-        stream << "Guess,Red,Green,Blue\n";
-      }
-      for(auto& item : m_colorTracking)
-      {
-        std::string guess = std::get<0>(item);
-        double red = std::get<1>(item);
-        double green = std::get<2>(item);
-        double blue = std::get<3>(item);
-        stream << guess << ',' <<
-          std::to_string(red) << ',' <<
-          std::to_string(green) << ',' <<
-          std::to_string(blue) << "\n";
-      }
-      stream.close();
-      m_colorTracking.clear();
-    }
-  }
-
-  if(m_skips % 50 == 0)
-  {
-    frc::SmartDashboard::PutNumber("Color Counted", m_colorCount);
-    m_countColors = frc::SmartDashboard::GetBoolean("Count Color", false);
-    if (matchedColor == kBlueTarget) {
-      colorString = "Blue";
-    } else if (matchedColor == kRedTarget) {
-      colorString = "Red";
-    } else if (matchedColor == kGreenTarget) {
-      colorString = "Green";
-    } else if (matchedColor == kYellowTarget) {
-      colorString = "Yellow";
-    } else {
-      colorString = "Unknown";
-    }
-
-    frc::SmartDashboard::PutNumber("Red", detectedColor.red);
-    frc::SmartDashboard::PutNumber("Green", detectedColor.green);
-    frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
-    frc::SmartDashboard::PutNumber("Confidence", confidence);
-    frc::SmartDashboard::PutString("Detected Color", colorString);
-    frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
-  }
-}
 
 void Robot::PoseEstimator () {
   // while (true) {
