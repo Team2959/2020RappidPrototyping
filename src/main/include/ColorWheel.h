@@ -9,6 +9,7 @@
 class ColorWheel
 {
 private:
+    static constexpr frc::Color kBlack = frc::Color(0,0,0);
     // Color Sensor - light off
     static constexpr frc::Color kBlueTarget = frc::Color(0.165, 0.467, 0.368);
     static constexpr frc::Color kGreenTarget = frc::Color(0.213, 0.614, 0.176);
@@ -31,14 +32,18 @@ private:
     rev::ColorSensorV3 m_colorSensor {frc::I2C::Port::kOnboard};
     rev::ColorMatch m_colorMatcher;
 
-    static constexpr frc::Color kCountedColor = kGreenTarget;
-    frc::Color m_lastColor = frc::Color(0,0,0);
+    frc::Color m_countedColor = kGreenTarget;
+    frc::Color m_gameDataTargetColor = kBlack;
+    frc::Color m_lastColor = kBlack;
     bool m_countColors = false;
+    bool m_logColors = false;
     int m_colorCount = 0;
 
     std::vector<std::tuple< std::string/* Guessed Color */, double /* Red */, double /* Green */, double /* Blue */ > > m_colorTracking;
 
-    std::string GuessedColor(frc::Color matchedColor);
+    std::string ColorName(frc::Color matchedColor);
+    frc::Color GetColorFromName(std::string colorName);
+    void SetTargetColorFromGameData();
 
 public:
     void OnRobotInit();

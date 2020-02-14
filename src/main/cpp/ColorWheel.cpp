@@ -6,6 +6,7 @@
 #include <sstream>
 #include <sys/stat.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/DriverStation.h>
 
 inline bool exists (const std::string& filename)
 {
@@ -30,6 +31,8 @@ void ColorWheel::OnRobotInit()
 
     frc::SmartDashboard::PutBoolean("Count Color", false);
     frc::SmartDashboard::PutNumber("Color Counted", 0);
+    frc::SmartDashboard::PutBoolean("Log Color", false);
+    frc::SmartDashboard::PutString("Color to Count", ColorName(m_countedColor));
 
     if (exists("/home/lvuser/colors.csv"))
     {
@@ -43,17 +46,20 @@ void ColorWheel::UpdateColorSensorValues(int skips)
     double confidence = 0.0;
     frc::Color matchedColor = m_colorMatcher.MatchClosestColor(detectedColor, confidence);
 
-    if (m_countColors)// && !(m_lastColor == matchedColor))
+    if (m_countColors)
     {
-        // tracking colors
-        m_colorTracking.push_back(std::tuple<std::string,double,double,double>(
-            GuessedColor(matchedColor),
-            detectedColor.red,
-            detectedColor.green,
-            detectedColor.blue
-        ));
+        if (m_logColors)
+        {
+            // tracking colors
+            m_colorTracking.push_back(std::tuple<std::string,double,double,double>(
+                ColorName(matchedColor),
+                detectedColor.red,
+                detectedColor.green,
+                detectedColor.blue
+            ));
+        }
 
-        if (m_lastColor == kCountedColor && !(m_lastColor == matchedColor))
+        if (m_lastColor == m_countedColor && !(m_lastColor == matchedColor))
         {
             m_colorCount++;
         }
@@ -64,7 +70,7 @@ void ColorWheel::UpdateColorSensorValues(int skips)
     if (!m_countColors)
     {
         m_colorCount = 0;
-        m_lastColor = frc::Color(0,0,0);
+        m_lastColor = kBlack;
 
         if (m_colorTracking.size() > 0)
         {
@@ -103,17 +109,26 @@ void ColorWheel::UpdateColorSensorValues(int skips)
     {
         frc::SmartDashboard::PutNumber("Color Counted", m_colorCount);
         m_countColors = frc::SmartDashboard::GetBoolean("Count Color", false);
+        m_logColors = frc::SmartDashboard::GetBoolean("Log Colors", false);
+        m_countedColor = GetColorFromName(
+            frc::SmartDashboard::GetString("Color to Count", ColorName(m_countedColor)));
 
         frc::SmartDashboard::PutNumber("Red", detectedColor.red);
         frc::SmartDashboard::PutNumber("Green", detectedColor.green);
         frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
         frc::SmartDashboard::PutNumber("Confidence", confidence);
-        frc::SmartDashboard::PutString("Detected Color", GuessedColor(matchedColor));
-        frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
+        frc::SmartDashboard::PutString("Detected Color", ColorName(matchedColor));
+        // frc::SmartDashboard::PutNumber("Proximity", m_colorSensor.GetProximity());
     }
 }
 
-std::string ColorWheel::GuessedColor(frc::Color matchedColor)
+void ColorWheel::SetTargetColorFromGameData()
+{
+    m_gameDataTargetColor = GetColorFromName(frc::DriverStation::GetInstance().GetGameSpecificMessage());
+    frc::SmartDashboard::PutString("Game Data Color", ColorName(m_gameDataTargetColor));
+}
+
+std::string ColorWheel::ColorName(frc::Color matchedColor)
 {
     if (matchedColor == kBlueTarget)
         return "Blue";
@@ -131,6 +146,28 @@ std::string ColorWheel::GuessedColor(frc::Color matchedColor)
         return "Red/Green";
     if (matchedColor == kRedYellowTarget)
         return "Yellow/Red";
+    if (matchedColor == kBlack)
+        return "Black";
 
     return "Unknown";
+}
+
+frc::Color ColorWheel::GetColorFromName(std::string colorName)
+{
+    if(colorName.length() > 0)
+    {
+        switch (toupper(colorName[0]))
+        {
+        case 'B':
+            return kBlueTarget;
+        case 'G':
+            return kGreenTarget;
+        case 'R':
+            return kRedTarget;
+        case 'Y':
+            return kYellowTarget;
+        }
+    }
+
+    return kBlack;
 }
