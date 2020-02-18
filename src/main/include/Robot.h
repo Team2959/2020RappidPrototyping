@@ -16,6 +16,7 @@
 #include <frc/XboxController.h>
 
 #include <frc/Spark.h>
+#include <frc/Solenoid.h>
 
 #include "DriveSystem.h"
 #include "conditioning.h"
@@ -40,6 +41,8 @@ public:
   // Shooter m_shooter;
 
   // frc::Spark m_quick{0};
+
+  frc::Solenoid m_dummySolenoid{0};
 
   // Color Sensor
   ColorWheel m_colorWheel;
